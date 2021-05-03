@@ -5,6 +5,7 @@ const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const jwt = require("jsonwebtoken"); // used to create, sign, and verify tokens
 const FacebookTokenStrategy = require("passport-facebook-token");
+const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
 const config = require("./config.js");
 
@@ -73,6 +74,24 @@ exports.facebookPassport = passport.use(
           });
         }
       });
+    }
+  )
+);
+
+//adding Google access
+
+const GOOGLE_CLIENT_ID = config.Google.clientId;
+const GOOGLE_CLIENT_SECRET = config.Google.clientSecret;
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/callback",
+    },
+    function (accessToken, refreshToken, profile, done) {
+      userProfile = profile;
+      return done(null, userProfile);
     }
   )
 );
